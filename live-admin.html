@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WordWise Admin — UI Design</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #4F46E5;
+  --primary-d: #3730A3;
+  --primary-l: #EEF2FF;
+  --secondary: #10B981;
+  --accent: #F59E0B;
+  --error: #EF4444;
+  --sidebar-bg: #1E1B4B;
+  --sidebar-text: rgba(255,255,255,.65);
+  --sidebar-act: rgba(255,255,255,.12);
+  --bg: #F3F4F6;
+  --surface: #FFFFFF;
+  --border: #E5E7EB;
+  --text-1: #111827;
+  --text-2: #6B7280;
+  --text-3: #9CA3AF;
+  --radius: 12px;
+  --shadow: 0 1px 4px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.10);
+}
+html, body { min-height: 100%; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text-1); }
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+.shell { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 240px; flex-shrink: 0; background: var(--sidebar-bg); display: flex; flex-direction: column;
+  position: fixed; top: 0; left: 0; height: 100vh; z-index: 100;
+}
+.sidebar-logo { padding: 24px 20px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.sidebar-logo .logo-icon { font-size: 26px; }
+.sidebar-logo .logo-text { font-size: 18px; font-weight: 800; color: #fff; }
+.sidebar-logo .logo-badge { margin-left: auto; font-size: 10px; font-weight: 700; background: var(--primary); color: white; padding: 2px 7px; border-radius: 99px; letter-spacing: .04em; }
+.sidebar-section { padding: 20px 12px 8px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,.35); letter-spacing: .1em; text-transform: uppercase; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin: 2px 8px; border-radius: 10px; cursor: pointer; color: var(--sidebar-text); font-size: 14px; font-weight: 500; transition: all .15s; user-select: none; }
+.nav-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+.nav-item.active { background: var(--sidebar-act); color: #fff; font-weight: 600; }
+.nav-item.active .nav-dot { background: var(--primary); }
+.nav-icon { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; }
+.nav-badge { margin-left: auto; background: var(--primary); color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; }
+.sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 10px; }
+.avatar-sm { width: 32px; height: 32px; border-radius: 99px; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: white; flex-shrink: 0; }
+.footer-name { font-size: 13px; color: #fff; font-weight: 600; }
+.footer-role { font-size: 11px; color: rgba(255,255,255,.45); }
+.footer-logout { margin-left: auto; font-size: 16px; cursor: pointer; opacity: .5; }
+.footer-logout:hover { opacity: 1; }
+.main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 28px; height: 60px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 50; }
+.topbar-title { font-size: 17px; font-weight: 700; flex: 1; }
+.topbar-search { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; width: 220px; }
+.topbar-search input { border: none; background: none; outline: none; font-size: 13px; color: var(--text-1); width: 100%; }
+.topbar-search span { color: var(--text-3); font-size: 14px; }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text-2); cursor: pointer; transition: background .15s; }
+.icon-btn:hover { background: var(--bg); }
+.notif-dot { position: relative; }
+.notif-dot::after { content: ''; position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 99px; background: var(--error); border: 1.5px solid white; }
+.page { display: none; padding: 28px; flex-direction: column; gap: 24px; }
+.page.active { display: flex; }
+.stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.stat-card { background: var(--surface); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; }
+.stat-header { display: flex; align-items: center; justify-content: space-between; }
+.stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.stat-trend { font-size: 12px; font-weight: 600; }
+.trend-up { color: var(--secondary); }
+.trend-down { color: var(--error); }
+.stat-value { font-size: 28px; font-weight: 800; color: var(--text-1); }
+.stat-label { font-size: 13px; color: var(--text-2); }
+.section-header { display: flex; align-items: center; justify-content: space-between; }
+.section-title { font-size: 16px; font-weight: 700; }
+.section-sub { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+.btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: opacity .15s; }
+.btn:hover { opacity: .88; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-secondary { background: var(--secondary); color: white; }
+.btn-outline { background: white; color: var(--primary); border: 1.5px solid var(--primary); }
+.btn-danger { background: var(--error); color: white; }
+.btn-ghost { background: var(--bg); color: var(--text-2); border: 1px solid var(--border); }
+.btn-sm { padding: 5px 11px; font-size: 12px; }
+.card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-body { padding: 0; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .06em; padding: 12px 20px; background: #FAFAFA; border-bottom: 1px solid var(--border); }
+td { padding: 13px 20px; font-size: 13px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #FAFAFA; }
+.td-word { font-weight: 700; color: var(--text-1); }
+.td-def { color: var(--text-2); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-example { color: var(--text-2); font-style: italic; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+.badge-a1 { background: #DCFCE7; color: #166534; }
+.badge-a2 { background: #D1FAE5; color: #065F46; }
+.badge-b1 { background: #DBEAFE; color: #1E40AF; }
+.badge-b2 { background: #E0E7FF; color: #3730A3; }
+.badge-c1 { background: #EDE9FE; color: #5B21B6; }
+.badge-c2 { background: #FCE7F3; color: #9D174D; }
+.badge-noun { background: #FEF3C7; color: #92400E; }
+.badge-verb { background: #DBEAFE; color: #1E40AF; }
+.badge-adj { background: #D1FAE5; color: #065F46; }
+.badge-adv { background: #EDE9FE; color: #5B21B6; }
+.badge-green { background: #D1FAE5; color: #065F46; }
+.badge-amber { background: #FEF3C7; color: #92400E; }
+.badge-red { background: #FEE2E2; color: #991B1B; }
+.badge-blue { background: #DBEAFE; color: #1E40AF; }
+.badge-gray { background: #F3F4F6; color: #374151; }
+.action-group { display: flex; gap: 6px; }
+.filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.filter-select { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border); background: white; font-size: 13px; color: var(--text-1); outline: none; }
+.filter-input { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--border); background: white; font-size: 13px; color: var(--text-1); outline: none; width: 180px; }
+.filter-input:focus, .filter-select:focus { border-color: var(--primary); }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: white; border-radius: 16px; padding: 28px; width: 520px; max-width: 95vw; box-shadow: var(--shadow-md); max-height: 90vh; overflow-y: auto; }
+.modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.form-group.full { grid-column: 1/-1; }
+.form-label { font-size: 12px; font-weight: 700; color: #374151; }
+.form-control { padding: 9px 12px; border-radius: 8px; border: 1.5px solid var(--border); font-size: 13px; color: var(--text-1); outline: none; width: 100%; transition: border-color .15s; }
+.form-control:focus { border-color: var(--primary); }
+textarea.form-control { resize: vertical; min-height: 72px; }
+.form-hint { font-size: 11px; color: var(--text-3); }
+.charts-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; }
+.mini-bar-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+.mini-bar-label { font-size: 12px; color: var(--text-2); width: 64px; flex-shrink: 0; }
+.mini-bar-track { flex: 1; height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+.mini-bar-fill { height: 100%; border-radius: 99px; }
+.mini-bar-val { font-size: 12px; font-weight: 700; color: var(--text-1); width: 32px; text-align: right; flex-shrink: 0; }
+.donut-wrap { position: relative; width: 120px; height: 120px; flex-shrink: 0; }
+.donut-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.donut-num { font-size: 22px; font-weight: 900; color: var(--text-1); line-height: 1; }
+.donut-sub { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+.legend { display: flex; flex-direction: column; gap: 8px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 99px; flex-shrink: 0; }
+.activity-list { display: flex; flex-direction: column; }
+.activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); }
+.activity-item:last-child { border-bottom: none; }
+.act-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.act-text { font-size: 13px; color: var(--text-1); }
+.act-time { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.user-cell { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 34px; height: 34px; border-radius: 99px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: white; flex-shrink: 0; }
+.progress-bar-sm { height: 6px; background: var(--bg); border-radius: 99px; overflow: hidden; width: 80px; }
+.progress-fill-sm { height: 100%; background: var(--primary); border-radius: 99px; }
+.analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.fake-chart { width: 100%; height: 160px; background: var(--bg); border-radius: 8px; overflow: hidden; position: relative; display: flex; align-items: flex-end; gap: 6px; padding: 0 12px 0; }
+.bar-col { flex: 1; border-radius: 4px 4px 0 0; transition: opacity .2s; }
+.bar-col:hover { opacity: .75; }
+.chart-label-row { display: flex; gap: 6px; padding: 6px 12px 0; }
+.chart-label { flex: 1; font-size: 10px; color: var(--text-3); text-align: center; }
+.line-chart { position: relative; width: 100%; height: 140px; }
+.line-chart svg { width: 100%; height: 100%; }
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-2); }
+.page-btns { display: flex; gap: 4px; }
+.page-btn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); background: white; font-size: 13px; font-weight: 600; color: var(--text-2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+.page-btn:hover:not(.active) { background: var(--bg); }
+.tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 0; }
+.tab-btn { padding: 10px 18px; font-size: 13px; font-weight: 600; color: var(--text-2); background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: all .15s; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab-btn:hover:not(.active) { color: var(--text-1); }
+.empty-state { padding: 48px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.empty-icon { font-size: 40px; }
+.empty-title { font-size: 15px; font-weight: 700; color: var(--text-1); }
+.empty-sub { font-size: 13px; color: var(--text-2); }
+@media (max-width: 1080px) {
+  .sidebar { position: static; width: 100%; height: auto; }
+  .main { margin-left: 0; }
+  .shell { flex-direction: column; }
+  .stat-row, .charts-row, .analytics-grid { grid-template-columns: 1fr; }
+  .topbar { padding: 0 16px; }
+  .topbar-search { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">📚</div>
+    <div class="logo-text">WordWise</div>
+    <div class="logo-badge">ADMIN</div>
+  </div>
+  <div class="sidebar-section">Main</div>
+  <div class="nav-item active" data-page="dashboard"><span class="nav-icon">📊</span> Dashboard</div>
+  <div class="nav-item" data-page="analytics"><span class="nav-icon">📈</span> Analytics</div>
+  <div class="sidebar-section">Content</div>
+  <div class="nav-item" data-page="words"><span class="nav-icon">🔤</span> Words <span class="nav-badge">215</span></div>
+  <div class="nav-item" data-page="sentences"><span class="nav-icon">📝</span> Sentences <span class="nav-badge">84</span></div>
+  <div class="nav-item" data-page="quiz"><span class="nav-icon">🧠</span> Quiz Questions <span class="nav-badge">62</span></div>
+  <div class="sidebar-section">Users</div>
+  <div class="nav-item" data-page="users"><span class="nav-icon">👥</span> Users</div>
+  <div class="nav-item" data-page="progress"><span class="nav-icon">🏅</span> Progress Reports</div>
+  <div class="sidebar-section">System</div>
+  <div class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span> Settings</div>
+  <div class="sidebar-footer">
+    <div class="avatar-sm">A</div>
+    <div><div class="footer-name">Admin</div><div class="footer-role">Super Admin</div></div>
+    <div class="footer-logout">🚪</div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="topbar-search"><span>🔍</span><input type="text" placeholder="Search…"/></div>
+    <div class="topbar-actions"><div class="icon-btn notif-dot">🔔</div><div class="icon-btn">❓</div><div class="avatar-sm" style="width:36px;height:36px;font-size:14px">A</div></div>
+  </div>
+
+  <div class="page active" id="page-dashboard">
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-header"><div class="stat-icon" style="background:#EEF2FF">📖</div><span class="stat-trend trend-up">↑ 12%</span></div><div class="stat-value" id="stat-words">215</div><div class="stat-label">Total Words</div></div>
+      <div class="stat-card"><div class="stat-header"><div class="stat-icon" style="background:#ECFDF5">📝</div><span class="stat-trend trend-up">↑ 8%</span></div><div class="stat-value" id="stat-sentences">84</div><div class="stat-label">Sentences</div></div>
+      <div class="stat-card"><div class="stat-header"><div class="stat-icon" style="background:#FEF3C7">👥</div><span class="stat-trend trend-up">↑ 24%</span></div><div class="stat-value">1,482</div><div class="stat-label">Active Users</div></div>
+      <div class="stat-card"><div class="stat-header"><div class="stat-icon" style="background:#FEE2E2">🧠</div><span class="stat-trend trend-down">↓ 3%</span></div><div class="stat-value">71%</div><div class="stat-label">Avg Quiz Score</div></div>
+    </div>
+    <div class="charts-row">
+      <div class="card">
+        <div class="card-header"><div><div class="section-title">Words by CEFR Level</div><div class="section-sub">Distribution across all words</div></div><select class="filter-select" style="width:auto"><option>All Categories</option><option>Emotions</option><option>Actions</option></select></div>
+        <div class="card-body" style="padding:20px">
+          <div class="mini-bar-row"><div class="mini-bar-label">A1</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:38%;background:#86EFAC"></div></div><div class="mini-bar-val">82</div></div>
+          <div class="mini-bar-row"><div class="mini-bar-label">A2</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:28%;background:#6EE7B7"></div></div><div class="mini-bar-val">60</div></div>
+          <div class="mini-bar-row"><div class="mini-bar-label">B1</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:16%;background:#93C5FD"></div></div><div class="mini-bar-val">34</div></div>
+          <div class="mini-bar-row"><div class="mini-bar-label">B2</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:10%;background:#818CF8"></div></div><div class="mini-bar-val">22</div></div>
+          <div class="mini-bar-row"><div class="mini-bar-label">C1</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:5%;background:#C4B5FD"></div></div><div class="mini-bar-val">11</div></div>
+          <div class="mini-bar-row"><div class="mini-bar-label">C2</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:3%;background:#F9A8D4"></div></div><div class="mini-bar-val">6</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div><div class="section-title">User Mastery</div><div class="section-sub">Across all active users</div></div></div>
+        <div class="card-body" style="padding:20px;display:flex;align-items:center;gap:24px">
+          <div class="donut-wrap"><svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="48" fill="none" stroke="#F3F4F6" stroke-width="16"/><circle cx="60" cy="60" r="48" fill="none" stroke="#4F46E5" stroke-width="16" stroke-dasharray="301.6" stroke-dashoffset="211" stroke-linecap="round"/><circle cx="60" cy="60" r="48" fill="none" stroke="#10B981" stroke-width="16" stroke-dasharray="301.6" stroke-dashoffset="271" stroke-linecap="round" style="transform:rotate(105deg);transform-origin:60px 60px"/><circle cx="60" cy="60" r="48" fill="none" stroke="#F59E0B" stroke-width="16" stroke-dasharray="301.6" stroke-dashoffset="286" stroke-linecap="round" style="transform:rotate(175deg);transform-origin:60px 60px"/></svg><div class="donut-label"><div class="donut-num">30%</div><div class="donut-sub">mastered</div></div></div>
+          <div class="legend"><div class="legend-item"><div class="legend-dot" style="background:#4F46E5"></div>Learning — 30%</div><div class="legend-item"><div class="legend-dot" style="background:#10B981"></div>Mastered — 30%</div><div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Reviewing — 20%</div><div class="legend-item"><div class="legend-dot" style="background:#F3F4F6"></div>New — 20%</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><div class="section-title">Recent Activity</div><button class="btn btn-ghost btn-sm">View all</button></div><div class="activity-list"><div class="activity-item"><div class="act-icon" style="background:#EEF2FF">➕</div><div><div class="act-text">New word <strong>"persevere"</strong> added to B2 vocabulary</div><div class="act-time">2 minutes ago · Admin</div></div></div><div class="activity-item"><div class="act-icon" style="background:#ECFDF5">👤</div><div><div class="act-text"><strong>alex@school.edu</strong> completed their first quiz — 80% score</div><div class="act-time">18 minutes ago</div></div></div><div class="activity-item"><div class="act-icon" style="background:#FEF3C7">✏️</div><div><div class="act-text">Sentence #14 updated — grammar focus corrected</div><div class="act-time">1 hour ago · Admin</div></div></div></div></div>
+  </div>
+
+  <div class="page" id="page-words"><div class="section-header"><div><div class="section-title">Words</div><div class="section-sub">215 words across all CEFR levels</div></div><button class="btn btn-primary" onclick="openModal('modal-add-word')">➕ Add Word</button></div><div class="card"><div class="card-header"><div class="filters"><input class="filter-input" type="text" placeholder="🔍  Search words…"/><select class="filter-select"><option>All Levels</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select></div><button class="btn btn-ghost btn-sm">⬇ Export CSV</button></div><div class="card-body"><table><thead><tr><th>Word</th><th>Definition</th><th>Part of Speech</th><th>Level</th><th>Category</th><th>Example</th><th>Actions</th></tr></thead><tbody><tr><td class="td-word">happy</td><td class="td-def">Feeling or showing pleasure or contentment</td><td><span class="badge badge-adj">adjective</span></td><td><span class="badge badge-a1">A1</span></td><td><span class="badge badge-gray">emotions</span></td><td class="td-example">She is happy to see her friends.</td><td><div class="action-group"><button class="btn btn-outline btn-sm" onclick="openModal('modal-add-word')">✏️</button><button class="btn btn-danger btn-sm">🗑️</button></div></td></tr><tr><td class="td-word">achieve</td><td class="td-def">Successfully reach a desired goal through effort</td><td><span class="badge badge-verb">verb</span></td><td><span class="badge badge-b1">B1</span></td><td><span class="badge badge-gray">actions</span></td><td class="td-example">You can achieve anything with hard work.</td><td><div class="action-group"><button class="btn btn-outline btn-sm" onclick="openModal('modal-add-word')">✏️</button><button class="btn btn-danger btn-sm">🗑️</button></div></td></tr></tbody></table><div class="pagination"><span>Showing 1–2 of 215 words</span><div class="page-btns"><div class="page-btn">‹</div><div class="page-btn active">1</div><div class="page-btn">2</div><div class="page-btn">…</div><div class="page-btn">36</div><div class="page-btn">›</div></div></div></div></div></div>
+
+  <div class="page" id="page-sentences"><div class="section-header"><div><div class="section-title">Sentences</div><div class="section-sub">84 sentences for the builder exercise</div></div><button class="btn btn-primary" onclick="openModal('modal-add-sentence')">➕ Add Sentence</button></div><div class="card"><div class="card-header"><div class="filters"><input class="filter-input" type="text" placeholder="🔍  Search sentences…"/><select class="filter-select"><option>All Levels</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select></div></div><div class="card-body"><table><thead><tr><th>#</th><th>Sentence</th><th>Translation</th><th>Level</th><th>Grammar Focus</th><th>Words Used</th><th>Actions</th></tr></thead><tbody><tr><td style="color:var(--text-3)">1</td><td class="td-word" style="font-size:13px">I am happy today.</td><td class="td-def">Tôi hạnh phúc hôm nay.</td><td><span class="badge badge-a1">A1</span></td><td><span class="badge badge-gray">to be + adj</span></td><td><span class="badge badge-blue">1 word</span></td><td><div class="action-group"><button class="btn btn-outline btn-sm" onclick="openModal('modal-add-sentence')">✏️</button><button class="btn btn-danger btn-sm">🗑️</button></div></td></tr></tbody></table></div></div></div>
+
+  <div class="page" id="page-quiz"><div class="section-header"><div><div class="section-title">Quiz Questions</div><div class="section-sub">62 questions across 5 question types</div></div><button class="btn btn-primary" onclick="openModal('modal-add-quiz')">➕ Add Question</button></div><div class="card"><div class="card-header"><div class="filters"><input class="filter-input" type="text" placeholder="🔍  Search questions…"/><select class="filter-select"><option>All Types</option><option>Word Definition</option><option>Fill in the Blank</option><option>Sentence Reorder</option><option>Choose Word</option><option>Spelling</option></select></div></div><div class="card-body"><table><thead><tr><th>#</th><th>Question</th><th>Type</th><th>Correct Answer</th><th>Level</th><th>Options</th><th>Actions</th></tr></thead><tbody><tr><td style="color:var(--text-3)">1</td><td class="td-def">What does "happy" mean?</td><td><span class="badge badge-blue">📖 Definition</span></td><td style="font-size:12px;color:var(--secondary);font-weight:600">feeling or showing pleasure…</td><td><span class="badge badge-a1">A1</span></td><td style="color:var(--text-3);font-size:12px">4 options</td><td><div class="action-group"><button class="btn btn-outline btn-sm" onclick="openModal('modal-add-quiz')">✏️</button><button class="btn btn-danger btn-sm">🗑️</button></div></td></tr></tbody></table></div></div></div>
+
+  <div class="page" id="page-users"><div class="section-header"><div><div class="section-title">Users</div><div class="section-sub">1,482 registered learners</div></div><div style="display:flex;gap:10px"><button class="btn btn-ghost btn-sm">⬇ Export</button><button class="btn btn-primary">➕ Add User</button></div></div><div class="card"><div class="card-header"><div class="filters"><input class="filter-input" type="text" placeholder="🔍  Search users…"/><select class="filter-select"><option>All Levels</option><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select></div></div><div class="card-body"><table><thead><tr><th>User</th><th>Level</th><th>Words Mastered</th><th>Quiz Accuracy</th><th>Last Active</th><th>Status</th><th>Actions</th></tr></thead><tbody><tr><td><div class="user-cell"><div class="avatar" style="background:#4F46E5">A</div><div><div style="font-weight:600;font-size:13px">Alex Johnson</div><div style="font-size:11px;color:var(--text-3)">alex@school.edu</div></div></div></td><td><span class="badge badge-b1">B1</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="progress-bar-sm"><div class="progress-fill-sm" style="width:40%"></div></div><span style="font-size:12px;color:var(--text-2)">86/215</span></div></td><td><span style="font-weight:700;color:var(--secondary)">80%</span></td><td style="font-size:12px;color:var(--text-2)">2 min ago</td><td><span class="badge badge-green">Active</span></td><td><div class="action-group"><button class="btn btn-outline btn-sm">👁</button><button class="btn btn-danger btn-sm">🗑️</button></div></td></tr></tbody></table></div></div></div>
+
+  <div class="page" id="page-progress"><div class="section-header"><div><div class="section-title">Progress Reports</div><div class="section-sub">Spaced-repetition status across all learners</div></div><button class="btn btn-ghost btn-sm">⬇ Export Report</button></div><div class="stat-row"><div class="stat-card"><div class="stat-header"><div class="stat-icon" style="background:#ECFDF5">🏅</div></div><div class="stat-value">8,420</div><div class="stat-label">Words Mastered (total)</div></div><div class="stat-card"><div class="stat-header"><div class="stat-icon" style="background:#DBEAFE">📖</div></div><div class="stat-value">14,610</div><div class="stat-label">Words In Learning</div></div><div class="stat-card"><div class="stat-header"><div class="stat-icon" style="background:#FEF3C7">⏰</div></div><div class="stat-value">3,204</div><div class="stat-label">Due for Review Now</div></div><div class="stat-card"><div class="stat-header"><div class="stat-icon" style="background:#EDE9FE">🔥</div></div><div class="stat-value">7.2</div><div class="stat-label">Avg Daily Streak (days)</div></div></div></div>
+
+  <div class="page" id="page-analytics"><div class="section-header"><div><div class="section-title">Analytics</div><div class="section-sub">App usage and learning trends</div></div><select class="filter-select"><option>Last 7 days</option><option>Last 30 days</option><option>Last 90 days</option></select></div><div class="analytics-grid"><div class="card"><div class="card-header"><div class="section-title">Daily Active Users</div></div><div class="card-body" style="padding:16px 20px 8px"><div class="fake-chart"><div class="bar-col" style="height:55%;background:#C7D2FE"></div><div class="bar-col" style="height:70%;background:#818CF8"></div><div class="bar-col" style="height:62%;background:#C7D2FE"></div><div class="bar-col" style="height:80%;background:#818CF8"></div><div class="bar-col" style="height:68%;background:#C7D2FE"></div><div class="bar-col" style="height:90%;background:#4F46E5"></div><div class="bar-col" style="height:75%;background:#818CF8"></div></div></div></div><div class="card"><div class="card-header"><div class="section-title">Feature Usage</div></div><div class="card-body" style="padding:16px 20px"><div class="mini-bar-row"><div class="mini-bar-label">Flashcards</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:72%;background:#4F46E5"></div></div><div class="mini-bar-val">72%</div></div><div class="mini-bar-row"><div class="mini-bar-label">Quiz</div><div class="mini-bar-track"><div class="mini-bar-fill" style="width:55%;background:#10B981"></div></div><div class="mini-bar-val">55%</div></div></div></div></div></div>
+
+  <div class="page" id="page-settings"><div class="section-title">System Settings</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div class="card"><div class="card-header"><div class="section-title" style="font-size:14px">API Configuration</div></div><div class="card-body" style="padding:20px;display:flex;flex-direction:column;gap:14px"><div class="form-group" style="margin:0"><div class="form-label">Cloudflare Worker URL</div><input class="form-control" value="https://english-learning-api.yuhaousa.workers.dev"/></div><div class="form-group" style="margin:0"><div class="form-label">D1 Database ID</div><input class="form-control" value="7c3315a2-a65c-492c-885e-935107572c17"/></div><button class="btn btn-primary btn-sm" style="align-self:flex-start">Save Changes</button></div></div><div class="card"><div class="card-header"><div class="section-title" style="font-size:14px">Content Defaults</div></div><div class="card-body" style="padding:20px;display:flex;flex-direction:column;gap:14px"><div class="form-group" style="margin:0"><div class="form-label">Default Flashcard Batch Size</div><input class="form-control" type="number" value="15"/></div><button class="btn btn-primary btn-sm" style="align-self:flex-start">Save Changes</button></div></div></div></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-add-word"><div class="modal"><div class="modal-title">➕ Add New Word</div><div class="form-row"><div class="form-group"><div class="form-label">Word *</div><input class="form-control" id="word-input" placeholder="e.g. persevere"/></div><div class="form-group"><div class="form-label">Phonetic</div><input class="form-control" id="phonetic-input" placeholder="e.g. /ˌpɜːsɪˈvɪə/"/></div></div><div class="form-group"><div class="form-label">Definition *</div><textarea class="form-control" id="definition-input" placeholder="Clear, learner-friendly definition…"></textarea></div><div class="form-group"><div class="form-label">Example Sentence</div><input class="form-control" id="example-input" placeholder="e.g. She persevered through all the challenges."/></div><div class="form-row"><div class="form-group"><div class="form-label">Part of Speech *</div><select class="form-control" id="part-of-speech-input"><option>noun</option><option>verb</option><option>adjective</option><option>adverb</option><option>preposition</option><option>other</option></select></div><div class="form-group"><div class="form-label">CEFR Level *</div><select class="form-control" id="level-input"><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select></div></div><div class="form-group"><div class="form-label">Category</div><input class="form-control" id="category-input" placeholder="e.g. emotions" value="general"/></div><div class="form-group" style="margin-bottom:0"><div class="form-hint" id="word-save-status">This will save to the live database.</div></div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-add-word')">Cancel</button><button class="btn btn-primary" id="save-word-btn" onclick="saveWord()">Save Word</button></div></div></div>
+<div class="modal-overlay" id="modal-add-sentence"><div class="modal"><div class="modal-title">➕ Add New Sentence</div><div class="form-group"><div class="form-label">Sentence (English) *</div><textarea class="form-control" placeholder="e.g. Traveling to new places is exciting."></textarea></div><div class="form-group"><div class="form-label">Translation</div><input class="form-control" placeholder="Native language translation (optional)"/></div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-add-sentence')">Cancel</button><button class="btn btn-primary">Save Sentence</button></div></div></div>
+<div class="modal-overlay" id="modal-add-quiz"><div class="modal"><div class="modal-title">➕ Add Quiz Question</div><div class="form-group"><div class="form-label">Question *</div><textarea class="form-control" placeholder="Enter the question text…"></textarea></div><div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-add-quiz')">Cancel</button><button class="btn btn-primary">Save Question</button></div></div></div>
+
+<script>
+  const titles = { dashboard:'Dashboard', analytics:'Analytics', words:'Words', sentences:'Sentences', quiz:'Quiz Questions', users:'Users', progress:'Progress Reports', settings:'System Settings' };
+  function showPage(id, el) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); const pg = document.getElementById('page-' + id); if (pg) pg.classList.add('active'); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); if (el) el.classList.add('active'); document.getElementById('topbar-title').textContent = titles[id] || id; }
+  function openModal(id) { const m = document.getElementById(id); if (m) m.classList.add('open'); }
+  function closeModal(id) { const m = document.getElementById(id); if (m) m.classList.remove('open'); }
+  function setWordSaveStatus(message, isError) { const status = document.getElementById('word-save-status'); if (!status) return; status.textContent = message; status.style.color = isError ? 'var(--error)' : 'var(--text-3)'; }
+  function resetWordForm() { const fields = ['word-input', 'phonetic-input', 'definition-input', 'example-input', 'part-of-speech-input', 'level-input', 'category-input']; fields.forEach(function(id) { const field = document.getElementById(id); if (!field) return; if (field.tagName === 'SELECT') { field.selectedIndex = 0; } else if (id === 'category-input') { field.value = 'general'; } else { field.value = ''; } }); setWordSaveStatus('This will save to the live database.', false); }
+  function escapeHtml(value) { return String(value).replace(/[&<>"]/g, function(character) { return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' })[character] || character; }); }
+  function syncWordStatsAndPagination() { const rows = document.querySelectorAll('#page-words tbody tr').length; const statWords = document.getElementById('stat-words'); const sectionSub = document.querySelector('#page-words .section-sub'); const navBadge = document.querySelector('.nav-item[data-page="words"] .nav-badge'); const paginationText = document.querySelector('#page-words .pagination span'); if (statWords) statWords.textContent = String(rows); if (sectionSub) sectionSub.textContent = rows + ' words across all CEFR levels'; if (navBadge) navBadge.textContent = String(rows); if (paginationText) { paginationText.textContent = rows > 0 ? ('Showing 1–' + rows + ' of ' + rows + ' words') : 'Showing 0 of 0 words'; } }
+  function addWordRow(word, definition, partOfSpeech, cefrLevel, category, exampleSentence) { const tableBody = document.querySelector('#page-words tbody'); if (!tableBody) return; const row = document.createElement('tr'); const partClass = ({ noun:'badge-noun', verb:'badge-verb', adjective:'badge-adj', adverb:'badge-adv' }[partOfSpeech] || 'badge-gray'); const levelClass = ({ A1:'badge-a1', A2:'badge-a2', B1:'badge-b1', B2:'badge-b2', C1:'badge-c1', C2:'badge-c2' }[cefrLevel] || 'badge-gray'); const cells = [ { className: 'td-word', text: word }, { className: 'td-def', text: definition }, { html: '<span class="badge ' + partClass + '">' + escapeHtml(partOfSpeech) + '</span>' }, { html: '<span class="badge ' + levelClass + '">' + escapeHtml(cefrLevel) + '</span>' }, { html: '<span class="badge badge-gray">' + escapeHtml(category) + '</span>' }, { className: 'td-example', text: exampleSentence || '' }, { html: '<div class="action-group"><button class="btn btn-outline btn-sm" onclick="openModal(&quot;modal-add-word&quot;)">✏️</button><button class="btn btn-danger btn-sm">🗑️</button></div>' } ]; cells.forEach(function(cell) { const td = document.createElement('td'); if (cell.className) td.className = cell.className; if (cell.text !== undefined) { td.textContent = cell.text; } else { td.innerHTML = cell.html; } row.appendChild(td); }); tableBody.prepend(row); syncWordStatsAndPagination(); }
+  function renderWordRows(words) { const tableBody = document.querySelector('#page-words tbody'); if (!tableBody) return; tableBody.innerHTML = ''; words.forEach(function(item) { addWordRow(item.word || '', item.definition || '', item.part_of_speech || '', item.cefr_level || '', item.category || 'general', item.example_sentence || ''); }); }
+  async function loadWords() { try { const response = await fetch('/api/words?page=1&limit=1000'); const payload = await response.json(); if (!response.ok || !payload.success || !Array.isArray(payload.data)) { throw new Error(payload.error || 'Failed to load words'); } renderWordRows(payload.data.slice().reverse()); syncWordStatsAndPagination(); } catch (error) { setWordSaveStatus(error.message || 'Failed to load words.', true); } }
+  function sentenceLevelClass(level) { return ({ A1:'badge-a1', A2:'badge-a2', B1:'badge-b1', B2:'badge-b2', C1:'badge-c1', C2:'badge-c2' }[level] || 'badge-gray'); }
+  function syncSentenceStats() { const rows = document.querySelectorAll('#page-sentences tbody tr').length; const statSentences = document.getElementById('stat-sentences'); const sectionSub = document.querySelector('#page-sentences .section-sub'); const navBadge = document.querySelector('.nav-item[data-page="sentences"] .nav-badge'); if (statSentences) statSentences.textContent = String(rows); if (sectionSub) sectionSub.textContent = rows + ' sentences for the builder exercise'; if (navBadge) navBadge.textContent = String(rows); }
+  function renderSentenceRows(sentences) { const tableBody = document.querySelector('#page-sentences tbody'); if (!tableBody) return; tableBody.innerHTML = ''; sentences.forEach(function(item, index) { const row = document.createElement('tr'); const wordIds = String(item.word_ids || '[]'); let wordCount = 0; try { const parsed = JSON.parse(wordIds); wordCount = Array.isArray(parsed) ? parsed.length : 0; } catch (_) { wordCount = 0; } row.innerHTML = '<td style="color:var(--text-3)">' + (index + 1) + '</td>' + '<td class="td-word" style="font-size:13px">' + escapeHtml(item.sentence || '') + '</td>' + '<td class="td-def">' + escapeHtml(item.translation || '') + '</td>' + '<td><span class="badge ' + sentenceLevelClass(item.cefr_level) + '">' + escapeHtml(item.cefr_level || '') + '</span></td>' + '<td><span class="badge badge-gray">' + escapeHtml(item.grammar_focus || '') + '</span></td>' + '<td><span class="badge badge-blue">' + wordCount + ' word' + (wordCount === 1 ? '' : 's') + '</span></td>' + '<td><div class="action-group"><button class="btn btn-outline btn-sm" onclick="openModal(&quot;modal-add-sentence&quot;)">✏️</button><button class="btn btn-danger btn-sm">🗑️</button></div></td>'; tableBody.appendChild(row); }); syncSentenceStats(); }
+  async function loadSentences() { try { const response = await fetch('/api/sentences?page=1&limit=1000'); const payload = await response.json(); if (!response.ok || !payload.success || !Array.isArray(payload.data)) { throw new Error(payload.error || 'Failed to load sentences'); } renderSentenceRows(payload.data.slice().reverse()); } catch (error) { console.error(error.message || 'Failed to load sentences.'); } }
+  function quizTypeLabel(type) { return ({ word_definition:'📖 Definition', fill_blank:'✍ Fill Blank', sentence_reorder:'🔀 Reorder', choose_word:'✅ Choose Word', spelling:'🔤 Spelling' }[type] || type || 'Unknown'); }
+  function syncQuizStats() { const rows = document.querySelectorAll('#page-quiz tbody tr').length; const sectionSub = document.querySelector('#page-quiz .section-sub'); const navBadge = document.querySelector('.nav-item[data-page="quiz"] .nav-badge'); if (sectionSub) sectionSub.textContent = rows + ' questions across all question types'; if (navBadge) navBadge.textContent = String(rows); }
+  function renderQuizRows(questions) { const tableBody = document.querySelector('#page-quiz tbody'); if (!tableBody) return; tableBody.innerHTML = ''; questions.forEach(function(item, index) { const row = document.createElement('tr'); let optionCount = 0; try { const parsed = JSON.parse(String(item.options || '[]')); optionCount = Array.isArray(parsed) ? parsed.length : 0; } catch (_) { optionCount = 0; } row.innerHTML = '<td style="color:var(--text-3)">' + (index + 1) + '</td>' + '<td class="td-def">' + escapeHtml(item.question || '') + '</td>' + '<td><span class="badge badge-blue">' + escapeHtml(quizTypeLabel(item.type)) + '</span></td>' + '<td style="font-size:12px;color:var(--secondary);font-weight:600">' + escapeHtml(item.correct_answer || '') + '</td>' + '<td><span class="badge ' + sentenceLevelClass(item.cefr_level) + '">' + escapeHtml(item.cefr_level || '') + '</span></td>' + '<td style="color:var(--text-3);font-size:12px">' + optionCount + ' options</td>' + '<td><div class="action-group"><button class="btn btn-outline btn-sm" onclick="openModal(&quot;modal-add-quiz&quot;)">✏️</button><button class="btn btn-danger btn-sm">🗑️</button></div></td>'; tableBody.appendChild(row); }); syncQuizStats(); }
+  async function loadQuizQuestions() { try { const response = await fetch('/api/quiz/questions?count=1000'); const payload = await response.json(); if (!response.ok || !payload.success || !Array.isArray(payload.data)) { throw new Error(payload.error || 'Failed to load quiz questions'); } renderQuizRows(payload.data); } catch (error) { console.error(error.message || 'Failed to load quiz questions.'); } }
+  async function saveWord() { const saveButton = document.getElementById('save-word-btn'); const word = document.getElementById('word-input')?.value.trim() || ''; const definition = document.getElementById('definition-input')?.value.trim() || ''; const partOfSpeech = document.getElementById('part-of-speech-input')?.value.trim() || ''; const cefrLevel = document.getElementById('level-input')?.value.trim() || ''; const exampleSentence = document.getElementById('example-input')?.value.trim() || ''; const phonetic = document.getElementById('phonetic-input')?.value.trim() || ''; const category = document.getElementById('category-input')?.value.trim() || 'general'; if (!word || !definition || !partOfSpeech || !cefrLevel) { setWordSaveStatus('Please fill in Word, Definition, Part of Speech, and CEFR Level.', true); return; } if (saveButton) { saveButton.disabled = true; saveButton.textContent = 'Saving...'; } setWordSaveStatus('Saving word to the database...', false); try { const response = await fetch('/api/words', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ word, definition, part_of_speech: partOfSpeech, cefr_level: cefrLevel, example_sentence: exampleSentence, phonetic, category }) }); const payload = await response.json(); if (!response.ok || !payload.success) { throw new Error(payload.error || 'Failed to save word'); } await loadWords(); resetWordForm(); closeModal('modal-add-word'); setWordSaveStatus('Word saved successfully.', false); } catch (error) { setWordSaveStatus(error.message || 'Failed to save word.', true); } finally { if (saveButton) { saveButton.disabled = false; saveButton.textContent = 'Save Word'; } } }
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay) { overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('open'); }); });
+  document.querySelectorAll('.nav-item[data-page]').forEach(function(el) { var id = el.getAttribute('data-page'); el.addEventListener('click', function() { showPage(id, el); }); });
+  loadWords();
+  loadSentences();
+  loadQuizQuestions();
+</script>
+</body>
+</html>

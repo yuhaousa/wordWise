@@ -1,0 +1,23 @@
+{
+  "name": "english-learning-api",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers backend for English Learning App",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create english_learning_db",
+    "db:migrate": "wrangler d1 execute english_learning_db --remote --file=src/db/schema.sql",
+    "db:seed": "wrangler d1 execute english_learning_db --remote --file=src/db/seed.sql",
+    "db:migrate:local": "wrangler d1 execute english_learning_db --local --file=src/db/schema.sql",
+    "db:seed:local": "wrangler d1 execute english_learning_db --local --file=src/db/seed.sql",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "hono": "^4.2.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240412.0",
+    "typescript": "^5.4.5",
+    "wrangler": "^3.51.2"
+  }
+}

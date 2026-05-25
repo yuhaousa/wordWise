@@ -1,0 +1,16 @@
+name = "english-learning-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "english_learning_db"
+database_id = "7c3315a2-a65c-492c-885e-935107572c17"
+
+[dev]
+port = 8787
+local_protocol = "http"

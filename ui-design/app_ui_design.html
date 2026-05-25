@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WordWise — UI Design (All Screens)</title>
+<style>
+  /* ── Reset & base ───────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary:       #4F46E5;
+    --primary-light: #818CF8;
+    --secondary:     #10B981;
+    --accent:        #F59E0B;
+    --error:         #EF4444;
+    --bg:            #F9FAFB;
+    --surface:       #FFFFFF;
+    --text-1:        #111827;
+    --text-2:        #6B7280;
+    --radius:        24px;
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #E5E7EB;
+    min-height: 100vh;
+    padding: 32px 16px 80px;
+  }
+
+  /* ── Page header ────────────────────────────── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .page-header h1 {
+    font-size: 28px; font-weight: 800; color: var(--text-1);
+  }
+  .page-header p { color: var(--text-2); margin-top: 6px; font-size: 14px; }
+
+  /* ── Splash screen styles ───────────────────── */
+  .splash-bg {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #3730A3, #4F46E5, #818CF8);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0;
+  }
+  .splash-logo-box {
+    width: 110px; height: 110px;
+    background: rgba(255,255,255,.15);
+    border-radius: 32px; border: 1.5px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 56px;
+  }
+  .splash-app-name {
+    margin-top: 28px; font-size: 40px; font-weight: 900;
+    color: white; letter-spacing: -0.5px;
+  }
+  .splash-tagline { color: rgba(255,255,255,.7); font-size: 15px; margin-top: 8px; }
+  .splash-dots { display: flex; gap: 8px; margin-top: 80px; }
+  .splash-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: rgba(255,255,255,.5);
+  }
+  .splash-dot.active { background: white; }
+
+  /* ── Login / Register shared ─────────────────── */
+  .auth-hero {
+    background: linear-gradient(160deg, #3730A3 0%, #4F46E5 100%);
+    padding: 24px 24px 32px; flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .auth-logo { font-size: 44px; }
+  .auth-title { font-size: 26px; font-weight: 900; color: white; }
+  .auth-subtitle { font-size: 13px; color: rgba(255,255,255,.75); }
+  .auth-card {
+    flex: 1; background: #F9FAFB;
+    border-radius: 32px 32px 0 0; padding: 28px 20px 16px;
+    overflow-y: auto;
+  }
+  .auth-card-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; color: #111827; }
+  .field-label { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 5px; }
+  .input-field {
+    width: 100%; padding: 12px 14px 12px 38px; border-radius: 12px;
+    border: 1.5px solid #E5E7EB; background: white; font-size: 14px;
+    color: #374151; outline: none; margin-bottom: 12px; position: relative;
+  }
+  .input-wrap { position: relative; margin-bottom: 12px; }
+  .input-icon {
+    position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+    font-size: 15px; color: #9CA3AF;
+  }
+  .input-wrap input {
+    width: 100%; padding: 12px 14px 12px 36px; border-radius: 12px;
+    border: 1.5px solid #E5E7EB; background: white; font-size: 14px;
+    color: #374151; outline: none;
+  }
+  .input-wrap input:focus { border-color: var(--primary); }
+  .forgot-link { text-align: right; font-size: 12px; color: var(--primary); font-weight: 600; margin-bottom: 16px; cursor: pointer; }
+  .auth-btn {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: var(--primary); color: white;
+    border: none; font-weight: 700; font-size: 15px; cursor: pointer; margin-bottom: 10px;
+  }
+  .auth-or {
+    display: flex; align-items: center; gap: 10px; margin: 10px 0;
+    font-size: 12px; color: #9CA3AF;
+  }
+  .auth-or::before, .auth-or::after {
+    content: ''; flex: 1; height: 1px; background: #E5E7EB;
+  }
+  .guest-btn {
+    width: 100%; padding: 13px; border-radius: 12px;
+    background: white; color: var(--primary);
+    border: 2px solid var(--primary); font-weight: 700; font-size: 14px;
+    cursor: pointer; margin-bottom: 18px;
+  }
+  .auth-switch { text-align: center; font-size: 13px; color: #6B7280; }
+  .auth-switch a { color: var(--primary); font-weight: 700; text-decoration: none; }
+  .level-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .level-pill {
+    padding: 5px 13px; border-radius: 99px; font-size: 12px; font-weight: 700;
+    border: 1.5px solid #E5E7EB; background: white; color: #374151; cursor: pointer;
+  }
+  .level-pill.sel { background: var(--primary); color: white; border-color: var(--primary); }
+
+  /* ── Screen selector tabs ───────────────────── */
+  .tabs {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .tab {
+    padding: 8px 18px; border-radius: 99px;
+    border: 2px solid #D1D5DB;
+    background: white; color: var(--text-2);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all .2s;
+  }
+  .tab.active {
+    background: var(--primary); border-color: var(--primary); color: white;
+  }
+
+  /* ── Phone frame ────────────────────────────── */
+  .phone-wrapper {
+    display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+  }
+  .phone-container { text-align: center; }
+  .phone-label {
+    font-size: 12px; font-weight: 700; color: var(--text-2);
+    letter-spacing: .08em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .phone {
+    width: 375px;
+    background: #1C1C1E;
+    border-radius: 48px;
+    padding: 14px;
+    box-shadow: 0 30px 60px rgba(0,0,0,.35), 0 0 0 1px #3A3A3C;
+    position: relative;
+  }
+  .notch {
+    width: 120px; height: 30px;
+    background: #1C1C1E;
+    border-radius: 0 0 20px 20px;
+    margin: 0 auto 4px;
+    position: relative; z-index: 2;
+  }
+  .screen {
+    width: 100%; height: 780px;
+    background: var(--bg);
+    border-radius: 34px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── Screen visibility ──────────────────────── */
+  .screen-page { display: none; width: 100%; height: 100%; }
+  .screen-page.active { display: flex; flex-direction: column; }
+
+  /* ── Status bar ─────────────────────────────── */
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 20px 4px; font-size: 12px; font-weight: 600;
+    color: var(--text-1); flex-shrink: 0;
+  }
+  .status-bar.white { color: white; }
+
+  /* ── Home screen ────────────────────────────── */
+  .home-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    padding: 16px 20px 28px; flex-shrink: 0;
+  }
+  .home-hero h2 { font-size: 20px; font-weight: 800; color: white; }
+  .home-hero p  { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 4px; }
+  .due-banner {
+    margin: 14px 16px 0;
+    background: #FEF3C7; border: 1.5px solid #F59E0B;
+    border-radius: 12px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600; color: #92400E;
+    flex-shrink: 0;
+  }
+  .due-banner .review-btn {
+    margin-left: auto; font-size: 12px; color: var(--primary);
+    font-weight: 700; background: none; border: none; cursor: pointer;
+  }
+  .section-title {
+    font-size: 14px; font-weight: 700; color: var(--text-1);
+    padding: 14px 16px 6px; flex-shrink: 0;
+  }
+  .card-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; padding: 0 16px; flex-shrink: 0;
+  }
+  .feat-card {
+    border-radius: 16px; padding: 16px;
+    display: flex; flex-direction: column; gap: 6px;
+    min-height: 108px;
+  }
+  .feat-card .icon { font-size: 28px; }
+  .feat-card .label { font-size: 14px; font-weight: 800; color: white; line-height: 1.2; }
+  .feat-card .sub   { font-size: 11px; color: rgba(255,255,255,.75); }
+  .fc-1 { background: linear-gradient(135deg,#4F46E5,#7C3AED); }
+  .fc-2 { background: linear-gradient(135deg,#10B981,#059669); }
+  .fc-3 { background: linear-gradient(135deg,#F59E0B,#D97706); }
+  .fc-4 { background: linear-gradient(135deg,#EF4444,#DC2626); }
+  .level-chips {
+    display: flex; gap: 8px; padding: 10px 16px; flex-wrap: wrap; flex-shrink: 0;
+  }
+  .chip {
+    padding: 4px 12px; border-radius: 99px;
+    font-size: 11px; font-weight: 700;
+  }
+  .chip-a1 { background: #BBF7D0; color: #166534; }
+  .chip-a2 { background: #A7F3D0; color: #065F46; }
+  .chip-b1 { background: #BFDBFE; color: #1E40AF; }
+  .chip-b2 { background: #C7D2FE; color: #3730A3; }
+  .chip-c1 { background: #DDD6FE; color: #5B21B6; }
+  .chip-c2 { background: #FBCFE8; color: #9D174D; }
+
+  /* ── Flashcard screen ───────────────────────── */
+  .screen-appbar {
+    display: flex; align-items: center; padding: 12px 16px;
+    background: white; border-bottom: 1px solid #F3F4F6; flex-shrink: 0;
+  }
+  .back-btn { font-size: 20px; margin-right: 10px; cursor: pointer; line-height: 1; }
+  .appbar-title { font-size: 16px; font-weight: 700; flex: 1; }
+  .appbar-right { font-size: 12px; font-weight: 600; color: var(--text-2); }
+  .progress-bar-container { flex-shrink: 0; }
+  .progress-bar { height: 4px; background: #E5E7EB; }
+  .progress-fill { height: 4px; background: var(--primary); transition: width .3s; }
+
+  .fc-content { flex: 1; padding: 16px; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
+  .level-chip-sm {
+    padding: 3px 10px; border-radius: 99px;
+    font-size: 11px; font-weight: 700; margin-bottom: 10px;
+    background: #C7D2FE; color: #3730A3;
+  }
+  .flip-card {
+    width: 100%; flex: 1; border-radius: 22px;
+    background: linear-gradient(135deg, var(--primary), #7C3AED);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    box-shadow: 0 10px 30px rgba(79,70,229,.35);
+    padding: 24px; cursor: pointer;
+  }
+  .flip-card .word { font-size: 44px; font-weight: 900; color: white; text-align: center; }
+  .flip-card .phonetic { font-size: 18px; color: rgba(255,255,255,.7); margin-top: 6px; }
+  .flip-card .audio-btn {
+    margin-top: 16px; padding: 8px 20px; border-radius: 99px;
+    background: rgba(255,255,255,.2); color: white; border: none; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+  }
+  .pos-chip {
+    margin-top: 14px; padding: 3px 12px; border-radius: 99px;
+    background: rgba(255,255,255,.25); color: white; font-size: 11px; font-weight: 600;
+  }
+  .flip-hint { font-size: 12px; color: var(--text-2); margin: 10px 0; }
+  .card-actions { display: flex; gap: 10px; width: 100%; }
+  .btn-no {
+    flex: 1; padding: 12px; border-radius: 12px;
+    border: 2px solid var(--error); background: white;
+    color: var(--error); font-weight: 700; font-size: 13px; cursor: pointer;
+  }
+  .btn-yes {
+    flex: 1; padding: 12px; border-radius: 12px;
+    background: var(--secondary); border: none;
+    color: white; font-weight: 700; font-size: 13px; cursor: pointer;
+  }
+
+  /* Flashcard — back side */
+  .flip-card-back {
+    width: 100%; flex: 1; border-radius: 22px;
+    background: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,.12);
+    padding: 24px; cursor: pointer;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .def-label { font-size: 11px; color: var(--text-2); font-weight: 600; margin-bottom: 6px; }
+  .definition { font-size: 18px; font-weight: 700; color: var(--text-1); line-height: 1.4; }
+  .divider { height: 1px; background: #E5E7EB; margin: 16px 0; }
+  .example { font-size: 14px; color: var(--text-2); font-style: italic; line-height: 1.5; }
+  .listen-row {
+    display: flex; align-items: center; gap: 6px;
+    color: var(--primary); font-size: 13px; font-weight: 700;
+    margin-top: 16px; cursor: pointer;
+  }
+
+  /* ── Sentence builder ───────────────────────── */
+  .sb-content { flex: 1; padding: 14px 16px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+  .sb-meta { display: flex; gap: 8px; }
+  .chip-sm {
+    padding: 3px 10px; border-radius: 99px;
+    font-size: 11px; font-weight: 700;
+  }
+  .chip-grammar { background: #F3F4F6; color: var(--text-2); }
+  .sb-instruction { font-size: 14px; font-weight: 700; color: var(--text-1); }
+  .answer-zone {
+    border-radius: 14px; padding: 12px;
+    min-height: 72px; border: 2px solid #D1D5DB;
+    background: #F9FAFB;
+    display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start;
+  }
+  .answer-zone.correct { border-color: var(--secondary); background: #ECFDF5; }
+  .word-tile {
+    padding: 7px 13px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .tile-placed { background: var(--primary); color: white; }
+  .tile-bank   { background: white; color: var(--primary); border: 2px solid var(--primary); }
+  .tile-empty  {
+    border: 2px dashed #D1D5DB; background: transparent;
+    color: transparent; min-width: 56px;
+  }
+  .result-msg { font-size: 13px; font-weight: 700; }
+  .result-ok  { color: var(--secondary); }
+  .word-bank-label { font-size: 11px; color: var(--text-2); font-weight: 600; }
+  .word-bank { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sb-btn {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: var(--primary); color: white; border: none;
+    font-weight: 700; font-size: 14px; cursor: pointer; flex-shrink: 0;
+  }
+  .sb-btn:disabled { opacity: .45; cursor: default; }
+
+  /* ── Quiz screen ────────────────────────────── */
+  .quiz-progress-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 16px 4px; flex-shrink: 0;
+  }
+  .q-counter { font-size: 12px; color: var(--text-2); }
+  .quiz-content { flex: 1; padding: 10px 16px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+  .q-card {
+    background: white; border-radius: 16px;
+    padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .q-type-label { font-size: 10px; font-weight: 700; color: var(--primary); letter-spacing: .06em; margin-bottom: 8px; }
+  .q-text { font-size: 16px; font-weight: 700; color: var(--text-1); line-height: 1.4; }
+  .options-list { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .option {
+    padding: 14px 16px; border-radius: 12px;
+    border: 2px solid #E5E7EB; background: white;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: border-color .2s;
+  }
+  .option.correct { border-color: var(--secondary); background: #ECFDF5; }
+  .option.wrong   { border-color: var(--error);     background: #FEF2F2; }
+  .option.selected { border-color: var(--primary);  background: #EEF2FF; }
+  .option-icon { font-size: 16px; }
+  .next-btn {
+    padding: 14px; border-radius: 12px;
+    background: var(--primary); color: white;
+    border: none; font-weight: 700; font-size: 14px;
+    cursor: pointer; flex-shrink: 0; margin: 0 16px 8px;
+  }
+
+  /* Quiz start screen */
+  .quiz-start {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 20px; gap: 12px; text-align: center;
+  }
+  .qs-icon { font-size: 64px; }
+  .qs-title { font-size: 20px; font-weight: 800; color: var(--text-1); }
+  .qs-sub   { font-size: 13px; color: var(--text-2); }
+  .level-selector { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .lchip { padding: 5px 14px; border-radius: 99px; font-size: 12px; font-weight: 700; background: #EEF2FF; color: var(--primary); cursor: pointer; }
+  .lchip.sel { background: var(--primary); color: white; }
+  .start-btn {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: var(--primary); color: white;
+    border: none; font-weight: 700; font-size: 15px; cursor: pointer;
+  }
+
+  /* Quiz result */
+  .quiz-result {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; padding: 24px 20px;
+  }
+  .result-emoji { font-size: 68px; }
+  .result-title { font-size: 24px; font-weight: 800; color: var(--text-1); margin-top: 12px; }
+  .result-score { font-size: 15px; color: var(--text-2); margin-top: 6px; }
+  .review-list { width: 100%; flex: 1; overflow: hidden; margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .review-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: white; border-radius: 12px; padding: 10px 12px;
+  }
+  .ri-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .ri-text { font-size: 12px; color: var(--text-1); line-height: 1.4; }
+  .ri-correct { font-size: 11px; color: var(--secondary); font-weight: 600; }
+  .replay-btn {
+    width: 100%; padding: 14px; border-radius: 12px;
+    background: var(--primary); color: white;
+    border: none; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 14px;
+  }
+
+  /* ── Progress screen ────────────────────────── */
+  .prog-content { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
+  .due-card {
+    background: #FFFBEB; border: 1.5px solid var(--accent);
+    border-radius: 14px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .due-icon { font-size: 28px; }
+  .due-label { font-size: 12px; color: var(--text-2); }
+  .due-num   { font-size: 28px; font-weight: 900; color: var(--accent); }
+  .prog-section-title { font-size: 14px; font-weight: 700; color: var(--text-1); }
+  .mastery-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .mastery-label { font-size: 12px; font-weight: 600; color: var(--text-1); width: 68px; flex-shrink: 0; }
+  .mastery-bar { flex: 1; height: 10px; background: #F3F4F6; border-radius: 99px; overflow: hidden; }
+  .mastery-fill { height: 100%; border-radius: 99px; }
+  .mastery-count { font-size: 12px; font-weight: 700; color: var(--text-1); width: 22px; text-align: right; flex-shrink: 0; }
+  .overall-card {
+    background: white; border-radius: 16px;
+    padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .overall-title { font-size: 14px; font-weight: 700; }
+  .donut-wrap { position: relative; width: 110px; height: 110px; }
+  .donut-svg { transform: rotate(-90deg); }
+  .donut-text {
+    position: absolute; inset: 0; display: flex;
+    align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: var(--primary);
+  }
+  .overall-sub { font-size: 12px; color: var(--text-2); text-align: center; }
+
+  /* ── Footer nav ─────────────────────────────── */
+  .bottom-nav {
+    display: flex; background: white; border-top: 1px solid #E5E7EB;
+    padding: 8px 0 16px; flex-shrink: 0;
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 2px; cursor: pointer;
+    padding: 4px;
+  }
+  .nav-icon { font-size: 20px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--text-2); }
+  .nav-item.nav-active .nav-label { color: var(--primary); }
+
+  /* ── Design notes panel ─────────────────────── */
+  .notes-panel {
+    max-width: 920px; margin: 40px auto 0;
+    background: white; border-radius: 20px;
+    padding: 28px 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  }
+  .notes-panel h2 { font-size: 18px; font-weight: 800; margin-bottom: 18px; color: var(--text-1); }
+  .spec-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media(max-width: 700px){ .spec-grid { grid-template-columns: 1fr; } }
+  .spec-group h3 { font-size: 13px; font-weight: 700; color: var(--text-2); margin-bottom: 10px; letter-spacing: .06em; text-transform: uppercase; }
+  .swatch-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: var(--text-1); }
+  .swatch { width: 20px; height: 20px; border-radius: 5px; border: 1px solid rgba(0,0,0,.08); flex-shrink: 0; }
+  .type-row { margin-bottom: 6px; font-size: 12px; color: var(--text-1); }
+
+  /* scrollbar */
+  .screen::-webkit-scrollbar { display: none; }
+  .prog-content::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>📚 English Learning App</h1>
+  <p>Flutter Mobile UI Design · All Screens · Click tabs to switch</p>
+</div>
+
+<!-- ── Screen tabs ─────────────────────────────── -->
+<div class="tabs">
+  <button class="tab active"   onclick="showScreen('splash')">✨ Splash</button>
+  <button class="tab"          onclick="showScreen('login')">🔐 Login</button>
+  <button class="tab"          onclick="showScreen('register')">📝 Register</button>
+  <button class="tab"          onclick="showScreen('home')">🏠 Home</button>
+  <button class="tab"          onclick="showScreen('flashcard-front')">🃏 Flashcard (Front)</button>
+  <button class="tab"          onclick="showScreen('flashcard-back')">🃏 Flashcard (Back)</button>
+  <button class="tab"          onclick="showScreen('sentence')">✏️ Sentence Builder</button>
+  <button class="tab"          onclick="showScreen('quiz-start')">🧠 Quiz Start</button>
+  <button class="tab"          onclick="showScreen('quiz-active')">🧠 Quiz Active</button>
+  <button class="tab"          onclick="showScreen('quiz-result')">🏆 Quiz Result</button>
+  <button class="tab"          onclick="showScreen('progress')">📊 Progress</button>
+  <button class="tab"          onclick="showScreen('settings')">⚙️ Settings</button>
+  <button class="tab"          onclick="showScreen('wrong-words')">❌ Wrong Words</button>
+</div>
+
+<!-- ── Phone ──────────────────────────────────── -->
+<div class="phone-wrapper">
+<div class="phone-container">
+  <div class="phone-label" id="screen-label">Home Screen</div>
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="screen">
+
+      <!-- ══════════════════════════════════════
+           SPLASH SCREEN
+      ══════════════════════════════════════ -->
+      <div class="screen-page active" id="page-splash">
+        <div class="splash-bg">
+          <div class="splash-logo-box">📚</div>
+          <div class="splash-app-name">WordWise</div>
+          <div class="splash-tagline">English learning made fun</div>
+          <div class="splash-dots">
+            <div class="splash-dot active"></div>
+            <div class="splash-dot"></div>
+            <div class="splash-dot"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           LOGIN SCREEN
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-login">
+        <div class="auth-hero">
+          <div class="auth-logo">📚</div>
+          <div class="auth-title">WordWise</div>
+          <div class="auth-subtitle">Welcome back! Sign in to continue.</div>
+        </div>
+        <div class="auth-card">
+          <div class="auth-card-title">Sign In</div>
+          <div class="field-label">Email</div>
+          <div class="input-wrap">
+            <span class="input-icon">✉</span>
+            <input type="email" placeholder="you@example.com" value="alex@school.edu"/>
+          </div>
+          <div class="field-label">Password</div>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" placeholder="••••••••" value="password"/>
+          </div>
+          <div class="forgot-link">Forgot password?</div>
+          <button class="auth-btn">Sign In</button>
+          <div class="auth-or">or</div>
+          <button class="guest-btn">👤 Continue as Guest</button>
+          <div class="auth-switch">
+            Don't have an account? <a href="#">Sign Up</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           REGISTER SCREEN
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-register">
+        <div style="background:linear-gradient(160deg,#3730A3,#4F46E5);padding:16px 16px 28px;display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0">
+          <div style="font-size:32px">📚</div>
+          <div style="font-size:22px;font-weight:900;color:white">Create Account</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.75)">Start your learning journey today</div>
+        </div>
+        <div class="auth-card" style="padding-top:22px">
+          <div class="field-label">Full Name</div>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" placeholder="Your name" value="Alex Johnson"/>
+          </div>
+          <div class="field-label">Email</div>
+          <div class="input-wrap">
+            <span class="input-icon">✉</span>
+            <input type="email" placeholder="you@example.com" value="alex@school.edu"/>
+          </div>
+          <div class="field-label">Password</div>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" placeholder="At least 6 characters" value="password"/>
+          </div>
+          <div class="field-label">Confirm Password</div>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" placeholder="Repeat password" value="password"/>
+          </div>
+          <button class="auth-btn" style="margin-top:8px">Create Account</button>
+          <div class="auth-switch" style="margin-top:10px">
+            Already have an account? <a href="#">Sign In</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           HOME SCREEN
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-home">
+        <div class="status-bar white" style="background:var(--primary); padding-bottom:0">
+          <span>9:41</span><span>●●● 100%</span>
+        </div>
+        <!-- Hero -->
+        <div class="home-hero">
+          <h2>Hello, Learner! 👋</h2>
+          <p>Keep up the streak!</p>
+        </div>
+        <!-- Due banner -->
+        <div class="due-banner">
+          <span>🔔</span>
+          <span>5 items due for review</span>
+          <button class="review-btn">Review</button>
+        </div>
+
+        <div class="section-title">What do you want to practice?</div>
+        <div class="card-grid">
+          <div class="feat-card fc-1">
+            <div class="icon">🃏</div>
+            <div class="label">Flashcards</div>
+            <div class="sub">Learn new words</div>
+          </div>
+          <div class="feat-card fc-2">
+            <div class="icon">📝</div>
+            <div class="label">Sentence Builder</div>
+            <div class="sub">Arrange words</div>
+          </div>
+          <div class="feat-card fc-3">
+            <div class="icon">🧠</div>
+            <div class="label">Quiz</div>
+            <div class="sub">Test yourself</div>
+          </div>
+          <div class="feat-card fc-4">
+            <div class="icon">📊</div>
+            <div class="label">Progress</div>
+            <div class="sub">Track mastery</div>
+          </div>
+        </div>
+
+        <!-- Bottom nav -->
+        <div style="flex:1"></div>
+        <div class="bottom-nav">
+          <div class="nav-item nav-active"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item"><div class="nav-icon">🃏</div><div class="nav-label">Flashcards</div></div>
+          <div class="nav-item"><div class="nav-icon">🧠</div><div class="nav-label">Quiz</div></div>
+          <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Progress</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           FLASHCARD — FRONT
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-flashcard-front">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">Flashcards</div>
+          <div class="appbar-right">4 / 15</div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar"><div class="progress-fill" style="width:27%"></div></div>
+        </div>
+        <div class="fc-content">
+          <div class="level-chip-sm">B1</div>
+          <!-- Front of card -->
+          <div class="flip-card">
+            <div class="word">achieve</div>
+            <div class="phonetic">/əˈtʃiːv/</div>
+            <button class="audio-btn">🔊 Listen</button>
+            <div class="pos-chip">verb</div>
+          </div>
+          <div class="flip-hint">Tap card to reveal definition</div>
+          <div class="card-actions">
+            <button class="btn-no">✕ Don't Know</button>
+            <button class="btn-yes">✓ Got It!</button>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item nav-active"><div class="nav-icon">🃏</div><div class="nav-label">Flashcards</div></div>
+          <div class="nav-item"><div class="nav-icon">🧠</div><div class="nav-label">Quiz</div></div>
+          <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Progress</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           FLASHCARD — BACK
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-flashcard-back">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">Flashcards</div>
+          <div class="appbar-right">4 / 15</div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar"><div class="progress-fill" style="width:27%"></div></div>
+        </div>
+        <div class="fc-content">
+          <div class="level-chip-sm">B1</div>
+          <!-- Back of card -->
+          <div class="flip-card-back">
+            <div class="def-label">DEFINITION</div>
+            <div class="definition">Successfully bring about or reach a desired goal through effort</div>
+            <div class="divider"></div>
+            <div class="def-label">EXAMPLE</div>
+            <div class="example">"You can achieve anything with hard work and dedication."</div>
+            <div class="listen-row">🔊 <span>Listen to example</span></div>
+          </div>
+          <div class="flip-hint">Tap card to flip back</div>
+          <div class="card-actions">
+            <button class="btn-no">✕ Don't Know</button>
+            <button class="btn-yes">✓ Got It!</button>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item nav-active"><div class="nav-icon">🃏</div><div class="nav-label">Flashcards</div></div>
+          <div class="nav-item"><div class="nav-icon">🧠</div><div class="nav-label">Quiz</div></div>
+          <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Progress</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           SENTENCE BUILDER
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-sentence">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">Sentence Builder</div>
+          <div class="appbar-right">2 / 5</div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+        </div>
+        <div class="sb-content">
+          <div class="sb-meta">
+            <span class="chip-sm chip-b1" style="background:#BFDBFE;color:#1E40AF">B1</span>
+            <span class="chip-sm chip-grammar">gerund as subject</span>
+          </div>
+          <div class="sb-instruction">Arrange the words to form a correct sentence:</div>
+
+          <!-- Answer zone (partially filled) -->
+          <div class="answer-zone">
+            <span class="word-tile tile-placed">Traveling</span>
+            <span class="word-tile tile-placed">to</span>
+            <span class="word-tile tile-placed">new</span>
+            <span class="word-tile tile-empty">_____</span>
+            <span class="word-tile tile-empty">_____</span>
+            <span class="word-tile tile-empty">_____</span>
+          </div>
+
+          <div class="word-bank-label">WORD BANK</div>
+          <div class="word-bank">
+            <span class="word-tile tile-bank">places</span>
+            <span class="word-tile tile-bank">is</span>
+            <span class="word-tile tile-bank">exciting</span>
+          </div>
+
+          <div style="flex:1"></div>
+          <button class="sb-btn">Check Answer</button>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item"><div class="nav-icon">🃏</div><div class="nav-label">Flashcards</div></div>
+          <div class="nav-item nav-active"><div class="nav-icon">🧠</div><div class="nav-label">Quiz</div></div>
+          <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Progress</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           QUIZ — START
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-quiz-start">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">Quiz</div>
+          <div class="appbar-right"></div>
+        </div>
+        <div class="quiz-start">
+          <div class="qs-icon">🧠</div>
+          <div class="qs-title">Ready to test your English?</div>
+          <div class="qs-sub">10 questions · Multiple types</div>
+          <!-- Level is set in Settings — shown here as a read-only badge -->
+          <div style="margin-top:12px">
+            <span class="chip chip-b1" style="padding:5px 16px;font-size:13px">Level B1</span>
+          </div>
+          <button class="start-btn" style="margin-top:32px">Start Quiz</button>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item"><div class="nav-icon">🃏</div><div class="nav-label">Flashcards</div></div>
+          <div class="nav-item nav-active"><div class="nav-icon">🧠</div><div class="nav-label">Quiz</div></div>
+          <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Progress</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           QUIZ — ACTIVE (answer selected)
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-quiz-active">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">Quiz</div>
+          <div class="appbar-right"></div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+        </div>
+        <div class="quiz-progress-row">
+          <span class="q-counter">Q 3 of 10</span>
+          <span class="chip-sm" style="background:#BFDBFE;color:#1E40AF;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700">B1</span>
+        </div>
+        <div class="quiz-content">
+          <div class="q-card">
+            <div class="q-type-label">✏️ FILL IN THE BLANK</div>
+            <div class="q-text">She _____ an apple every morning.</div>
+          </div>
+          <div class="options-list">
+            <div class="option correct">eats <span class="option-icon">✅</span></div>
+            <div class="option">eat</div>
+            <div class="option wrong">eating <span class="option-icon">❌</span></div>
+            <div class="option">eaten</div>
+          </div>
+        </div>
+        <button class="next-btn">Next Question →</button>
+        <div class="bottom-nav">
+          <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item"><div class="nav-icon">🃏</div><div class="nav-label">Flashcards</div></div>
+          <div class="nav-item nav-active"><div class="nav-icon">🧠</div><div class="nav-label">Quiz</div></div>
+          <div class="nav-item"><div class="nav-icon">📊</div><div class="nav-label">Progress</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           QUIZ — RESULT
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-quiz-result">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">Quiz Results</div>
+          <div class="appbar-right"></div>
+        </div>
+        <div class="quiz-result">
+          <div class="result-emoji">🎉</div>
+          <div class="result-title">Excellent!</div>
+          <div class="result-score">8 / 10 correct · 80%</div>
+          <div class="review-list">
+            <div class="review-item">
+              <div class="ri-icon">✅</div>
+              <div><div class="ri-text">What does "happy" mean?</div></div>
+            </div>
+            <div class="review-item">
+              <div class="ri-icon">✅</div>
+              <div><div class="ri-text">She ___ an apple every morning.</div></div>
+            </div>
+            <div class="review-item">
+              <div class="ri-icon">❌</div>
+              <div>
+                <div class="ri-text">What does "opportunity" mean?</div>
+                <div class="ri-correct">✔ a set of circumstances that makes it possible to do something</div>
+              </div>
+            </div>
+            <div class="review-item">
+              <div class="ri-icon">✅</div>
+              <div><div class="ri-text">Reorder: Traveling / to / new / places / is / exciting</div></div>
+            </div>
+            <div class="review-item">
+              <div class="ri-icon">✅</div>
+              <div><div class="ri-text">Spell: "a situation that tests your abilities"</div></div>
+            </div>
+          </div>
+          <button class="replay-btn">Play Again</button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PROGRESS SCREEN
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-progress">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">My Progress</div>
+          <div class="appbar-right"></div>
+        </div>
+        <div class="prog-content">
+          <!-- Due card -->
+          <div class="due-card">
+            <div class="due-icon">⏰</div>
+            <div>
+              <div class="due-label">Due for Review</div>
+              <div class="due-num">5</div>
+            </div>
+          </div>
+
+          <!-- Word mastery -->
+          <div class="prog-section-title">Word Mastery</div>
+          <div>
+            <div class="mastery-row">
+              <span class="mastery-label">New</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:35%;background:#94A3B8"></div></div>
+              <span class="mastery-count">7</span>
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Learning</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:25%;background:#60A5FA"></div></div>
+              <span class="mastery-count">5</span>
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Reviewing</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:20%;background:#F59E0B"></div></div>
+              <span class="mastery-count">4</span>
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Mastered</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:20%;background:#10B981"></div></div>
+              <span class="mastery-count">4</span>
+            </div>
+          </div>
+
+          <!-- Sentence mastery -->
+          <div class="prog-section-title">Sentence Mastery</div>
+          <div>
+            <div class="mastery-row">
+              <span class="mastery-label">New</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:50%;background:#94A3B8"></div></div>
+              <span class="mastery-count">3</span>
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Learning</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:33%;background:#60A5FA"></div></div>
+              <span class="mastery-count">2</span>
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Reviewing</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:17%;background:#F59E0B"></div></div>
+              <span class="mastery-count">1</span>
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Mastered</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:0%;background:#10B981"></div></div>
+              <span class="mastery-count">0</span>
+            </div>
+          </div>
+
+          <!-- Overall circular progress -->
+          <div class="overall-card">
+            <div class="overall-title">Overall Mastery</div>
+            <div class="donut-wrap">
+              <svg class="donut-svg" width="110" height="110" viewBox="0 0 110 110">
+                <circle cx="55" cy="55" r="42" fill="none" stroke="#F3F4F6" stroke-width="12"/>
+                <circle cx="55" cy="55" r="42" fill="none" stroke="#4F46E5" stroke-width="12"
+                  stroke-dasharray="263.9" stroke-dashoffset="185"
+                  stroke-linecap="round"/>
+              </svg>
+              <div class="donut-text">30%</div>
+            </div>
+            <div class="overall-sub">4 mastered out of 26 items</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+          <div class="nav-item"><div class="nav-icon">🃏</div><div class="nav-label">Flashcards</div></div>
+          <div class="nav-item"><div class="nav-icon">🧠</div><div class="nav-label">Quiz</div></div>
+          <div class="nav-item nav-active"><div class="nav-icon">📊</div><div class="nav-label">Progress</div></div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           SETTINGS SCREEN
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-settings">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">Settings</div>
+          <div class="appbar-right" style="color:var(--primary);font-weight:700;font-size:14px">Save</div>
+        </div>
+
+        <div style="flex:1;overflow-y:auto;padding:14px 14px 20px;display:flex;flex-direction:column;gap:14px">
+
+          <!-- Profile card -->
+          <div style="background:linear-gradient(135deg,#4F46E5,#818CF8);border-radius:18px;padding:16px;display:flex;align-items:center;gap:12px">
+            <div style="width:52px;height:52px;border-radius:99px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:white">A</div>
+            <div style="flex:1">
+              <div style="color:white;font-size:17px;font-weight:800">Alex Johnson</div>
+              <div style="color:rgba(255,255,255,.7);font-size:12px">alex@school.edu</div>
+            </div>
+            <div style="background:rgba(255,255,255,.2);padding:5px 12px;border-radius:99px;color:white;font-weight:800;font-size:13px">B1</div>
+          </div>
+
+          <!-- Level section -->
+          <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:.04em;padding-left:2px">LEARNING LEVEL</div>
+          <div style="background:white;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+            <div style="font-size:11px;color:#9CA3AF;font-weight:600;margin-bottom:10px">CEFR Level</div>
+            <div style="display:flex;justify-content:space-between">
+              <div style="padding:8px 11px;border-radius:10px;border:1.5px solid #E5E7EB;color:#9CA3AF;font-weight:800;font-size:13px">A1</div>
+              <div style="padding:8px 11px;border-radius:10px;border:1.5px solid #E5E7EB;color:#9CA3AF;font-weight:800;font-size:13px">A2</div>
+              <div style="padding:8px 11px;border-radius:10px;background:var(--primary);border:1.5px solid var(--primary);color:white;font-weight:800;font-size:13px">B1</div>
+              <div style="padding:8px 11px;border-radius:10px;border:1.5px solid #E5E7EB;color:#9CA3AF;font-weight:800;font-size:13px">B2</div>
+              <div style="padding:8px 11px;border-radius:10px;border:1.5px solid #E5E7EB;color:#9CA3AF;font-weight:800;font-size:13px">C1</div>
+              <div style="padding:8px 11px;border-radius:10px;border:1.5px solid #E5E7EB;color:#9CA3AF;font-weight:800;font-size:13px">C2</div>
+            </div>
+          </div>
+
+          <!-- Audio section -->
+          <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:.04em;padding-left:2px">AUDIO &amp; PRONUNCIATION</div>
+          <div style="background:white;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="font-size:18px">🔊</span>
+              <div style="flex:1">
+                <div style="font-size:14px;font-weight:600">Enable Audio</div>
+                <div style="font-size:12px;color:#9CA3AF">TTS for words and sentences</div>
+              </div>
+              <!-- Toggle ON -->
+              <div style="width:44px;height:24px;background:var(--primary);border-radius:99px;position:relative;cursor:pointer">
+                <div style="position:absolute;right:3px;top:3px;width:18px;height:18px;background:white;border-radius:99px"></div>
+              </div>
+            </div>
+            <div style="height:1px;background:#F3F4F6"></div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="font-size:18px">⏩</span>
+              <div style="flex:1">
+                <div style="font-size:14px;font-weight:600">Speech Speed</div>
+                <div style="font-size:12px;color:#9CA3AF">Normal</div>
+              </div>
+              <div style="width:90px;height:4px;background:#E5E7EB;border-radius:99px;position:relative">
+                <div style="width:50%;height:4px;background:var(--primary);border-radius:99px"></div>
+                <div style="position:absolute;left:46%;top:-6px;width:16px;height:16px;background:var(--primary);border-radius:99px;border:3px solid white;box-shadow:0 0 0 1px var(--primary)"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notifications -->
+          <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:.04em;padding-left:2px">NOTIFICATIONS</div>
+          <div style="background:white;border-radius:16px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);display:flex;align-items:center;gap:12px">
+            <span style="font-size:18px">🔔</span>
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:600">Daily Review Reminders</div>
+              <div style="font-size:12px;color:#9CA3AF">Get notified when items are due</div>
+            </div>
+            <!-- Toggle ON -->
+            <div style="width:44px;height:24px;background:var(--primary);border-radius:99px;position:relative;cursor:pointer">
+              <div style="position:absolute;right:3px;top:3px;width:18px;height:18px;background:white;border-radius:99px"></div>
+            </div>
+          </div>
+
+          <!-- App links -->
+          <div style="font-size:12px;font-weight:700;color:var(--primary);letter-spacing:.04em;padding-left:2px">APP</div>
+          <div style="background:white;border-radius:16px;padding:4px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F3F4F6">
+              <span style="font-size:17px;color:var(--primary)">ℹ️</span>
+              <span style="flex:1;font-size:14px;font-weight:600">About WordWise</span>
+              <span style="color:#D1D5DB;font-size:18px">›</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F3F4F6">
+              <span style="font-size:17px;color:var(--primary)">🔏</span>
+              <span style="flex:1;font-size:14px;font-weight:600">Privacy Policy</span>
+              <span style="color:#D1D5DB;font-size:18px">›</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 0">
+              <span style="font-size:17px;color:var(--primary)">⭐</span>
+              <span style="flex:1;font-size:14px;font-weight:600">Rate the App</span>
+              <span style="color:#D1D5DB;font-size:18px">›</span>
+            </div>
+          </div>
+
+          <!-- Sign out -->
+          <div style="background:white;border-radius:16px;padding:4px 16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 0">
+              <span style="font-size:17px;color:var(--error)">🚪</span>
+              <span style="flex:1;font-size:14px;font-weight:600;color:var(--error)">Sign Out</span>
+              <span style="color:#D1D5DB;font-size:18px">›</span>
+            </div>
+          </div>
+
+          <div style="text-align:center;font-size:11px;color:#D1D5DB;padding:4px 0 8px">WordWise v1.0.0</div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           WRONG WORDS LIBRARY SCREEN
+      ══════════════════════════════════════ -->
+      <div class="screen-page" id="page-wrong-words">
+        <div class="status-bar"><span>9:41</span><span>●●● 100%</span></div>
+        <!-- AppBar -->
+        <div class="screen-appbar">
+          <div class="back-btn">‹</div>
+          <div class="appbar-title">Wrong Words Library</div>
+          <div class="appbar-right" style="color:var(--primary);font-size:20px">▶</div>
+        </div>
+
+        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0;background:var(--bg)">
+
+          <!-- Stats header card -->
+          <div style="margin:14px 14px 0;background:linear-gradient(135deg,#EF4444,#F97316);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px;box-shadow:0 6px 18px rgba(239,68,68,.3)">
+            <span style="font-size:32px">❌</span>
+            <div style="flex:1">
+              <div style="color:white;font-weight:800;font-size:15px">Wrong Words Library</div>
+              <div style="color:rgba(255,255,255,.75);font-size:12px;margin-top:2px">7 to review · 3 mastered · 24 total misses</div>
+            </div>
+            <div style="background:white;color:#EF4444;font-weight:700;font-size:13px;padding:7px 14px;border-radius:10px;cursor:pointer">Practice</div>
+          </div>
+
+          <!-- Filter chips -->
+          <div style="padding:12px 14px 8px;display:flex;gap:6px;align-items:center;overflow-x:auto">
+            <div style="padding:6px 14px;border-radius:20px;background:var(--primary);color:white;font-size:12px;font-weight:600;white-space:nowrap">All</div>
+            <div style="padding:6px 14px;border-radius:20px;background:#BBF7D0;color:#059669;font-size:12px;font-weight:600;white-space:nowrap">A1</div>
+            <div style="padding:6px 14px;border-radius:20px;background:#BFDBFE;color:#2563EB;font-size:12px;font-weight:600;white-space:nowrap">B1</div>
+            <div style="padding:6px 14px;border-radius:20px;background:#C7D2FE;color:#4F46E5;font-size:12px;font-weight:600;white-space:nowrap">B2</div>
+            <div style="margin-left:auto;color:#9CA3AF;font-size:20px;cursor:pointer;flex-shrink:0">👁</div>
+          </div>
+
+          <div style="height:1px;background:#E5E7EB;margin:0 14px"></div>
+
+          <!-- Word list -->
+          <div style="padding:10px 14px 20px;display:flex;flex-direction:column;gap:10px">
+
+            <!-- Word card 1 — expanded with details -->
+            <div style="background:white;border-radius:14px;border:1.5px solid #E5E7EB;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+              <div style="display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px">
+                <!-- Miss count badge -->
+                <div style="background:rgba(239,68,68,.1);color:#EF4444;font-weight:800;font-size:13px;padding:4px 8px;border-radius:8px">×5</div>
+                <div style="flex:1">
+                  <div style="font-weight:700;font-size:16px;color:#111827">ambiguous</div>
+                  <div style="color:#9CA3AF;font-size:12px">/æmˈbɪɡ.ju.əs/</div>
+                </div>
+                <div style="background:#C7D2FE;color:#4338CA;font-weight:700;font-size:11px;padding:3px 10px;border-radius:99px">B2</div>
+                <div style="color:#9CA3AF;font-size:18px">∧</div>
+              </div>
+              <!-- Expanded detail -->
+              <div style="padding:0 14px 14px;border-top:1px solid #F3F4F6;margin-top:-2px">
+                <div style="padding-top:12px">
+                  <div style="color:var(--primary);font-size:11px;font-weight:700;letter-spacing:.5px">ADJECTIVE</div>
+                  <div style="font-size:14px;line-height:1.5;margin-top:4px">Open to more than one interpretation; not having one obvious meaning.</div>
+                  <div style="background:#F9FAFB;border-radius:8px;padding:10px;margin-top:8px;font-size:13px;color:#6B7280;font-style:italic">"The ending of the movie was deliberately ambiguous."</div>
+                  <!-- Action buttons -->
+                  <div style="display:flex;gap:8px;margin-top:12px">
+                    <div style="display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:8px;background:rgba(79,70,229,.08);cursor:pointer">
+                      <span style="color:var(--primary);font-size:14px">🔊</span>
+                      <span style="color:var(--primary);font-size:12px;font-weight:600">Listen</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:8px;background:rgba(16,185,129,.08);cursor:pointer">
+                      <span style="color:#10B981;font-size:14px">✓</span>
+                      <span style="color:#10B981;font-size:12px;font-weight:600">Mark learned</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:8px;background:rgba(239,68,68,.08);cursor:pointer">
+                      <span style="color:#EF4444;font-size:14px">🗑</span>
+                      <span style="color:#EF4444;font-size:12px;font-weight:600">Remove</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Word card 2 — collapsed -->
+            <div style="background:white;border-radius:14px;border:1.5px solid #E5E7EB;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+              <div style="display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px">
+                <div style="background:rgba(239,68,68,.1);color:#EF4444;font-weight:800;font-size:13px;padding:4px 8px;border-radius:8px">×3</div>
+                <div style="flex:1">
+                  <div style="font-weight:700;font-size:16px;color:#111827">persevere</div>
+                  <div style="color:#9CA3AF;font-size:12px">/ˌpɜː.sɪˈvɪər/</div>
+                </div>
+                <div style="background:#C7D2FE;color:#4338CA;font-weight:700;font-size:11px;padding:3px 10px;border-radius:99px">B2</div>
+                <div style="color:#9CA3AF;font-size:18px">∨</div>
+              </div>
+            </div>
+
+            <!-- Word card 3 — collapsed -->
+            <div style="background:white;border-radius:14px;border:1.5px solid #E5E7EB;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+              <div style="display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px">
+                <div style="background:rgba(239,68,68,.1);color:#EF4444;font-weight:800;font-size:13px;padding:4px 8px;border-radius:8px">×2</div>
+                <div style="flex:1">
+                  <div style="font-weight:700;font-size:16px;color:#111827">eloquent</div>
+                  <div style="color:#9CA3AF;font-size:12px">/ˈel.ə.kwənt/</div>
+                </div>
+                <div style="background:#DDD6FE;color:#7C3AED;font-weight:700;font-size:11px;padding:3px 10px;border-radius:99px">C1</div>
+                <div style="color:#9CA3AF;font-size:18px">∨</div>
+              </div>
+            </div>
+
+            <!-- Word card 4 — mastered (green tint) -->
+            <div style="background:rgba(16,185,129,.06);border-radius:14px;border:1.5px solid rgba(16,185,129,.35);box-shadow:0 2px 6px rgba(0,0,0,.04)">
+              <div style="display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px">
+                <div style="background:rgba(16,185,129,.15);color:#10B981;font-weight:800;font-size:13px;padding:4px 8px;border-radius:8px">✓</div>
+                <div style="flex:1">
+                  <div style="font-weight:700;font-size:16px;color:#9CA3AF;text-decoration:line-through">diligent</div>
+                  <div style="color:#9CA3AF;font-size:12px">/ˈdɪl.ɪ.dʒənt/</div>
+                </div>
+                <div style="background:#BFDBFE;color:#2563EB;font-weight:700;font-size:11px;padding:3px 10px;border-radius:99px">B1</div>
+                <div style="color:#9CA3AF;font-size:18px">∨</div>
+              </div>
+            </div>
+
+            <!-- Word card 5 — collapsed -->
+            <div style="background:white;border-radius:14px;border:1.5px solid #E5E7EB;box-shadow:0 2px 6px rgba(0,0,0,.04)">
+              <div style="display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px">
+                <div style="background:rgba(239,68,68,.1);color:#EF4444;font-weight:800;font-size:13px;padding:4px 8px;border-radius:8px">×4</div>
+                <div style="flex:1">
+                  <div style="font-weight:700;font-size:16px;color:#111827">rhetoric</div>
+                  <div style="color:#9CA3AF;font-size:12px">/ˈret.ər.ɪk/</div>
+                </div>
+                <div style="background:#DDD6FE;color:#7C3AED;font-weight:700;font-size:11px;padding:3px 10px;border-radius:99px">C1</div>
+                <div style="color:#9CA3AF;font-size:18px">∨</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /screen -->
+  </div><!-- /phone -->
+</div><!-- /phone-container -->
+</div><!-- /phone-wrapper -->
+
+<!-- ── Design Spec Panel ───────────────────────── -->
+<div class="notes-panel">
+  <h2>🎨 Design Specification</h2>
+  <div class="spec-grid">
+    <div class="spec-group">
+      <h3>Colors</h3>
+      <div class="swatch-row"><div class="swatch" style="background:#4F46E5"></div> Primary — Indigo #4F46E5</div>
+      <div class="swatch-row"><div class="swatch" style="background:#818CF8"></div> Primary Light #818CF8</div>
+      <div class="swatch-row"><div class="swatch" style="background:#10B981"></div> Secondary — Emerald #10B981</div>
+      <div class="swatch-row"><div class="swatch" style="background:#F59E0B"></div> Accent — Amber #F59E0B</div>
+      <div class="swatch-row"><div class="swatch" style="background:#EF4444"></div> Error — Red #EF4444</div>
+      <div class="swatch-row"><div class="swatch" style="background:#F9FAFB;border:1px solid #E5E7EB"></div> Background #F9FAFB</div>
+      <br/>
+      <h3>CEFR Levels</h3>
+      <div class="swatch-row"><div class="swatch" style="background:#BBF7D0"></div> A1 — Green</div>
+      <div class="swatch-row"><div class="swatch" style="background:#A7F3D0"></div> A2 — Emerald</div>
+      <div class="swatch-row"><div class="swatch" style="background:#BFDBFE"></div> B1 — Blue</div>
+      <div class="swatch-row"><div class="swatch" style="background:#C7D2FE"></div> B2 — Indigo</div>
+      <div class="swatch-row"><div class="swatch" style="background:#DDD6FE"></div> C1 — Violet</div>
+      <div class="swatch-row"><div class="swatch" style="background:#FBCFE8"></div> C2 — Pink</div>
+    </div>
+    <div class="spec-group">
+      <h3>Typography</h3>
+      <div class="type-row"><strong>Font Family:</strong> Nunito (Google Fonts)</div>
+      <div class="type-row"><strong>H1 Display:</strong> 42px / 900 weight</div>
+      <div class="type-row"><strong>H2 Headline:</strong> 20px / 800 weight</div>
+      <div class="type-row"><strong>Body Large:</strong> 17px / 600 weight</div>
+      <div class="type-row"><strong>Body:</strong> 15px / 500 weight</div>
+      <div class="type-row"><strong>Caption:</strong> 12px / 600 weight</div>
+      <br/>
+      <h3>Spacing</h3>
+      <div class="type-row">Screen padding: 16px horizontal</div>
+      <div class="type-row">Card gap: 12px</div>
+      <div class="type-row">Section margin: 14–24px</div>
+      <div class="type-row">Button padding: 14px vertical</div>
+    </div>
+    <div class="spec-group">
+      <h3>Component Shapes</h3>
+      <div class="type-row">Phone frame: 48px radius</div>
+      <div class="type-row">Screen: 34px radius</div>
+      <div class="type-row">Feature cards: 16px radius</div>
+      <div class="type-row">Flip card: 22px radius</div>
+      <div class="type-row">Buttons: 12px radius</div>
+      <div class="type-row">Chips: 99px (pill)</div>
+      <div class="type-row">Word tiles: 8px radius</div>
+      <br/>
+      <h3>Screens</h3>
+      <div class="type-row">🏠 Home — hero + feature grid + level chips</div>
+      <div class="type-row">🃏 Flashcard — flip card + TTS + Got It / Don't Know</div>
+      <div class="type-row">✏️ Sentence Builder — drag tiles + word bank</div>
+      <div class="type-row">📝 Quiz — 4-option MCQ + result feedback</div>
+      <div class="type-row">📊 Progress — mastery bars + donut chart</div>
+      <div class="type-row">❌ Wrong Words Library — miss count, expand/collapse, practice mode</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const screenMeta = {
+    'splash':          'Splash Screen — App Launch',
+    'login':           'Login Screen — Sign In',
+    'register':        'Register Screen — Create Account',
+    'home':            'Home Screen',
+    'flashcard-front': 'Flashcard — Word Side (Front)',
+    'flashcard-back':  'Flashcard — Definition Side (Back)',
+    'sentence':        'Sentence Builder',
+    'quiz-start':      'Quiz — Start Screen',
+    'quiz-active':     'Quiz — Active (Answer Selected)',
+    'quiz-result':     'Quiz — Results Screen',
+    'progress':        'Progress Screen',
+    'settings':        'Settings Screen',
+    'wrong-words':     'Wrong Words Library',
+  };
+
+  // Wire up tabs declaratively — no reliance on `event`
+  document.querySelectorAll('.tab').forEach(function(btn) {
+    // Extract the screen id from the onclick attribute string
+    var match = btn.getAttribute('onclick').match(/showScreen\('(.+?)'\)/);
+    if (!match) return;
+    var id = match[1];
+
+    btn.addEventListener('click', function() {
+      // 1. Hide every screen page
+      document.querySelectorAll('.screen-page').forEach(function(p) {
+        p.classList.remove('active');
+      });
+      // 2. Show the target page
+      var target = document.getElementById('page-' + id);
+      if (target) target.classList.add('active');
+
+      // 3. Deactivate all tabs, activate clicked one
+      document.querySelectorAll('.tab').forEach(function(t) {
+        t.classList.remove('active');
+      });
+      btn.classList.add('active');
+
+      // 4. Update the label above the phone
+      var label = document.getElementById('screen-label');
+      if (label) label.textContent = screenMeta[id] || id;
+    });
+  });
+
+  // Remove the inline onclick handlers so they don't fire twice
+  document.querySelectorAll('.tab[onclick]').forEach(function(btn) {
+    btn.removeAttribute('onclick');
+  });
+
+  // Set initial label
+  document.getElementById('screen-label').textContent = screenMeta['splash'];
+</script>
+</body>
+</html>

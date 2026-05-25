@@ -1,0 +1,10 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "git -C c:/development/workMaster/english-learning-app": true,
+        "/^git init c:/development/workMaster/english-learning-app$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "where.exe": true
+    }
+}
